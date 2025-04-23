@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibration Demo</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        #vibrate-btn {
+            padding: 20px 40px;
+            font-size: 18px;
+            border: none;
+            border-radius: 50px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            user-select: none;
+            touch-action: manipulation;
+            transition: transform 0.2s;
+        }
+
+        #vibrate-btn:active {
+            transform: scale(0.95);
+        }
+
+        #message {
+            position: fixed;
+            top: 20px;
+            text-align: center;
+            width: 100%;
+            color: #666;
+        }
+
+        .desktop #vibrate-btn {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div id="message"></div>
+    <button id="vibrate-btn">Hold to Vibrate</button>
+
+    <script>
+        const messageEl = document.getElementById('message');
+        const vibrateBtn = document.getElementById('vibrate-btn');
+        
+        // Check if device is mobile and supports vibration
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const hasVibration = 'vibrate' in navigator;
+
+        if (!isMobile || !hasVibration) {
+            document.body.classList.add('desktop');
+            messageEl.textContent = 'This demo requires a mobile device that supports vibration';
+            vibrateBtn.disabled = true;
+        } else {
+            messageEl.textContent = 'Hold the button to feel the vibration';
+            
+            let isVibrating = false;
+            
+            const startVibration = () => {
+                if (!isVibrating) {
+                    isVibrating = true;
+                    vibrateInterval = setInterval(() => {
+                        navigator.vibrate([100, 50, 100]);
+                    }, 300);
+                }
+            };
+
+            const stopVibration = () => {
+                if (isVibrating) {
+                    isVibrating = false;
+                    navigator.vibrate(0); // Stop any ongoing vibration
+                    clearInterval(vibrateInterval);
+                }
+            };
+
+            // Add touch and mouse events
+            vibrateBtn.addEventListener('mousedown', startVibration);
+            vibrateBtn.addEventListener('mouseup', stopVibration);
+            vibrateBtn.addEventListener('mouseleave', stopVibration);
+            vibrateBtn.addEventListener('touchstart', startVibration);
+            vibrateBtn.addEventListener('touchend', stopVibration);
+        }
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
+
